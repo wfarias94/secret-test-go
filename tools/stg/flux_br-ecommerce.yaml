@@ -1,0 +1,28 @@
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: flux-br-ecommerce
+  namespace: default
+spec:
+  interval: 24h
+  approvePlan: auto
+  destroyResourcesOnDeletion: true
+  path: ./tf-flux
+  serviceAccountName: tf-runner-stg-bootstrap
+  vars:
+  - name: environment
+    value: stg
+  - name: cluster_name
+    value: br-ecommerce
+  - name: github_org
+    value: wfarias94
+  - name: github_repository
+    value: secret-test-go
+  varsFrom:
+  - kind: Secret
+    name: flux-system
+    varsKeys:
+    - password:github_token
+  sourceRef:
+    kind: GitRepository
+    name: tf-tools
